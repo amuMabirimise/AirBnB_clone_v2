@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] == '{' and pline[-1] == '}'\
+                    if pline[0] == '{' and pline[-1] =='}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -114,17 +114,17 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Create an object of any class"""
-    if not args:
-        print("** class name missing **")
-        return
-    elif args not in HBNBCommand.classes:
-        print("** class doesn't exist **")
-        return
-    new_instance = HBNBCommand.classes[args]()
-    storage.save()
-    print(new_instance.id)
-    storage.save()
+        """ Create an object of any class"""
+        if not args:
+            print("** class name missing **")
+            return
+        elif args not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+        new_instance = HBNBCommand.classes[args]()
+        storage.save()
+        print(new_instance.id)
+        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -233,7 +233,7 @@ class HBNBCommand(cmd.Cmd):
         print("Usage: count <class_name>")
 
     def do_update(self, args):
-         """ Create an object of any class"""
+        """ Updates a certain object with new info """
         c_name = c_id = att_name = att_val = kwargs = ''
 
         # isolate cls from id/args, ex: (<cls>, delim, <id/args>)
