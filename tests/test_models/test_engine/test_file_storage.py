@@ -18,11 +18,11 @@ class test_fileStorage(unittest.TestCase):
             del storage._FileStorage__objects[key]
 
     def tearDown(self):
-        """ Remove storage file at end of tests """
-        try:
-            os.remove('file.json')
-        except:
-            pass
+    """ Remove storage file at the end of tests """
+    try:
+        os.remove('file.json')
+    except FileNotFoundError:
+        pass
 
     def test_obj_list_empty(self):
         """ __objects is initially empty """
@@ -103,7 +103,7 @@ class test_fileStorage(unittest.TestCase):
         self.assertEqual(temp, 'BaseModel' + '.' + _id)
 
     def test_storage_var_created(self):
-        """ FileStorage object storage created """
-        from models.engine.file_storage import FileStorage
-        print(type(storage))
-        self.assertEqual(type(storage), FileStorage)
+    """ FileStorage object storage created """
+    from models.engine.file_storage import FileStorage
+    print(type(storage))  # Remove or replace this line
+    self.assertEqual(type(storage), FileStorage)
