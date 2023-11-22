@@ -1,86 +1,94 @@
 #!/usr/bin/python3
-"""This is the DB storage class for AirBnB"""
-from models.base_model import BaseModel, Base
-from models.user import User
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.place import Place
-from models.review import Review
+""" New Engine DBStorage """
+from sqlalchemy import (create_engine)
 from os import getenv
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm.scoping import scoped_session
+from sqlalchemy.schema import MetaData
+from sqlalchemy.orm import sessionmaker
 
-all_classes = {"State", "City", "Amenity", "User", "Place", "Review"}
+
+username = getenv('HBNB_MYSQL_USER')
+password = getenv('HBNB_MYSQL_PWD')
+db = getenv('HBNB_MYSQL_DB')
+host = getenv('HBNB_MYSQL_HOST')
+v_env = getenv('HBNB_ENV')
+
+URI = f"mysql+mysqldb://{username}:{password}@{host}/{db}"
 
 
 class DBStorage:
-    """DBSTORAGE"""
-
+    """ New Engine DBStorage """
     __engine = None
     __session = None
 
     def __init__(self):
-        """Initialize a connection with MySQL, create tables"""
+        self.__engine = create_engine(URI, pool_pre_ping=True)
 
-        db_uri = "{0}+{1}://{2}:{3}@{4}:3306/{5}".format(
-            'mysql', 'mysqldb', getenv('HBNB_MYSQL_USER'),
-            getenv('HBNB_MYSQL_PWD'), getenv('HBNB_MYSQL_HOST'),
-            getenv('HBNB_MYSQL_DB'))
-
-        self.__engine = create_engine(db_uri, pool_pre_ping=True)
-        self.reload()
-
-        if getenv('HBNB_ENV') == 'test':
-            Base.metadata.drop_all(self.__engine)
+        if v_env == 'test':
+            metadata = MetaData(self.__engine)
+            metadata.reflect()
+            metadata.drop_all()
 
     def all(self, cls=None):
-        """ALL """
-        entities = dict()
+        """ Return all objects of specific cls or all cls """
+        from models.base_model import BaseModel, Base
+        from models.amenity import Amenity
+        from models.city import City
+        from models.place import Place
+        from models.review import Review
+        from models.state import State
+        from models.user import User
+        classDict = {"City": City, "State": State,
+                     "User": User, "Place": Place,
+                     "Review": Review, "Amenity": Amenity}
+        objects = {}
+        if cls is None:
+            for className in classDict:
+                data = self.__session.query(classDict[className]).all()
+                for obj in data:
+                    objects[f"{obj.__class__.__name__}.{obj.id}"] = obj
 
-        if cls:
-            return self.get_data_from_table(cls, entities)
-
-        for entity in all_classes:
-            entities = self.get_data_from_table(eval(entity), entities)
-
-        return entities
+        else:
+            if isinstance(cls, str):
+                cls = classDict[cls]
+            data = self.__session.query(cls).all()
+            for obj in data:
+                objects[f"{obj.id}"] = obj
+        return objects
 
     def new(self, obj):
-        """Add obj to the current database session"""
-        if obj:
-            self.__session.add(obj)
+        """ Adds the object to the current
+        database session (self.__session) """
+        self.__session.add(obj)
 
     def save(self):
-        """Commit all changes to the current database session"""
+        """ Commits all changes of the current database session """
         self.__session.commit()
 
     def delete(self, obj=None):
-        """Delete obj from the current database session"""
-
-        if obj is not None:
+        """Deletes from the current database session obj if not None"""
+        if obj:
             self.__session.delete(obj)
 
     def reload(self):
-        """Create all tables into database and init new sesh"""
+        """ Reload data from the database """
+        from models.base_model import BaseModel, Base
+        from models.amenity import Amenity
+        from models.city import City
+        from models.place import Place
+        from models.review import Review
+        from models.state import State
+        from models.user import User
+
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine,
-                                       expire_on_commit=False)
+
+        session_factory = sessionmaker(
+            bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()
 
-    def get_data_from_table(self, cls, structure):
-        """Get the data from a MySQL Table"""
-
-        if type(structure) is dict:
-            query = self.__session.query(cls)
-
-            for _row in query.all():
-                key = "{}.{}".format(cls.__name__, _row.id)
-                structure[key] = _row
-
-            return structure
-
     def close(self):
-        """Close the Session"""
-        self.__session.close()
+        """
+        Call remove() method on the private session attribute
+        """
+        self.__session.remove()

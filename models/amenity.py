@@ -1,32 +1,16 @@
 #!/usr/bin/python3
-"""This is the amenity class"""
-from models.base_model import BaseModel, Base
-from os import getenv
-from sqlalchemy import Column, Table, String, ForeignKey
+""" State Module for HBNB project """
 from sqlalchemy.orm import relationship
-
-place_amenity = Table("place_amenity", Base.metadata,
-                      Column("place_id", String(60),
-                             ForeignKey("places.id"),
-                             primary_key=True, nullable=False),
-                      Column("amenity_id", String(60),
-                             ForeignKey("amenities.id"),
-                             primary_key=True, nullable=False))
+from models.base_model import Base, BaseModel
+from sqlalchemy import Column, String, ForeignKey
 
 
 class Amenity(BaseModel, Base):
-    """Represent an Amenity for a MySQL database.
-
-    Attributes:
-        name: The Amenity name
-        place_amenities (relationship): The Place - Amenity relationship.
-
     """
-
-    __tablename__ = "amenities"
-
-    if getenv('HBNB_TYPE_STORAGE') == 'db':
-        name = Column(String(128), nullable=False)
-        place_amenities = relationship('Place', secondary=place_amenity)
-    else:
-        name = ''
+    Amenity inherits from BaseModel and Base (respect the order)
+    """
+    __tablename__ = 'amenities'
+    name = Column(String(128), nullable=False)
+    places_amenities = relationship(
+        "Place",
+        secondary="place_amenity")
