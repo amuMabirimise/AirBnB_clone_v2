@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+<<<<<<< HEAD
 """
  Fabric script (based on the file 3-deploy_web_static.py)
  deletes out-of-date archives
@@ -93,3 +94,26 @@ def do_clean(number=0):
             continue
         run("rm -rf /data/web_static/releases/{}"
             .format(i))
+=======
+# Fabfile to delete out-of-date archives.
+import os
+from fabric.api import env, local, run
+
+env.hosts = ['34.239.250.75', '100.25.17.31']
+env.user = 'ubuntu'
+
+
+def do_clean(number=0):
+    """ CLEANS """
+
+    number = int(number)
+
+    if number == 0:
+        number = 2
+    else:
+        number += 1
+
+    local('cd versions ; ls -t | tail -n +{} | xargs rm -rf'.format(number))
+    path = '/data/web_static/releases'
+    run('cd {} ; ls -t | tail -n +{} | xargs rm -rf'.format(path, number))
+>>>>>>> 6c965a7858f9faa6258d83f9676082c551788ccc

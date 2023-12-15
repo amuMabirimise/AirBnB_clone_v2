@@ -4,7 +4,7 @@ from tests.test_models.test_base_model import test_basemodel
 from models.place import Place
 
 
-class TestPlace(test_basemodel):
+class test_Place(test_basemodel):
     """ """
 
     def __init__(self, *args, **kwargs):
@@ -61,13 +61,9 @@ class TestPlace(test_basemodel):
     def test_longitude(self):
         """ """
         new = self.value()
-        self.assertEqual(type(new.longitude), float)
+        self.assertEqual(type(new.latitude), float)
 
     def test_amenity_ids(self):
         """ """
         new = self.value()
         self.assertEqual(type(new.amenity_ids), list)
-
-
-if __name__ == "__main__":
-    unittest.main()
