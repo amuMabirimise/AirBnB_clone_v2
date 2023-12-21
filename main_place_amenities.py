@@ -41,4 +41,7 @@ place_2.amenities.append(amenity_3)
 storage.save()
 
 print("OK")
+<<<<<<< HEAD
+=======
 
+>>>>>>> 6c965a7858f9faa6258d83f9676082c551788ccc
