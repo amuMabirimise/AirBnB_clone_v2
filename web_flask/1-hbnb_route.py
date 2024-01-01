@@ -1,31 +1,22 @@
 #!/usr/bin/python3
 """
-Starts a Flask web application.
-
-My web application should listens on 0.0.0.0, port 5000.
-
-Routes:
-    /: Displays 'Hello HBNB!'.
-    /hbnb: Displays 'HBNB'.
+Scripting that starts a Flask web application
 """
-
 from flask import Flask
 
 app = Flask(__name__)
 
 
-@app.route("/", strict_slashes=False)
+@app.route('/', strict_slashes=False)
 def hello_hbnb():
-    """Displays 'Hello HBNB!'.when called"""
-    return "Hello HBNB!"
+    """viewing a function"""
+    return 'Hello HBNB!'
 
 
-@app.route("/hbnb", strict_slashes=False)
+@app.route('/hbnb', strict_slashes=False)
 def hbnb():
-    """Displays 'HBNB'.when called"""
-    return "HBNB"
-
+    """viewing a function"""
+    return 'HBNB'
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port 5000)
-
+    app.run(host='0.0.0.0', port=5000)
